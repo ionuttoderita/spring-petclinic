@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout'){
+            steps{
+                git branch: 'main', url: 'https://github.com/ionuttoderita/spring-petclinic.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                catchError(buildResult: 'SUCCESS', message: 'upps this stage has failed but will continue with next stage', stageResult: 'FAILURE') {
+                    echo 'First message: Hello World'
+                    sh './mvnw clean package'
+                    sh '''
+                        echo "Multiline shell steps works too"
+                        ls -lah
+                    '''
+                }
+            }
+        }
+        stage('My echo stage') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE', message: 'problems with "My echo Stage" ') {
+                    echo 'shell script done successfully'
+                }
+            }
+        }
+    }
+
+	post {
+	    always {
+	        junit '**/target/surfire-reports/TEST-*.xml'
+	        archiveArtifacts 'target/*.jar'
+	    }
+	   failure {
+	       mail to: 'ionut.toderita@ericsson.com',
+	            subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                body: "Something is wrong with ${env.BUILD_URL}"
+
+	       hipchatSend message: "Attention @here ${env.JOB_NAME} #${env.BUILD_NUMBER} has failed.",
+	                   color: 'RED'
+       }
+	}
+}
