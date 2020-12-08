@@ -33,8 +33,6 @@ pipeline {
 	    always {
 	        junit '**/target/surfire-reports/TEST-*.xml'
 	        archiveArtifacts 'target/*.jar'
-	    //}
-	    //changed {
 	        emailext to: 'ionut_toderita@yahoo.com', "test@jenkins"
 	        	     recipientProviders: [buildUser(), upstreamDevelopers(), requestor()],
 	        	     subject: 'Job \'${JOB_NAME}\' (${BUILD_NUMBER}) is waiting for input',
