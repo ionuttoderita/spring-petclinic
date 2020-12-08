@@ -31,14 +31,14 @@ pipeline {
 
 	post {
 	    always {
-	        junit '**/target/surfire-reports/TEST-*.xml'
-	        archiveArtifacts 'target/*.jar'
-	        emailext to: ['ionut_toderita@yahoo.com', "test@jenkins"],
+	        junit "**/target/surfire-reports/TEST-*.xml"
+	        archiveArtifacts "target/*.jar"
+	        emailext to: [ionut_toderita@yahoo.com, test@jenkins],
 	        	     recipientProviders: [buildUser(), upstreamDevelopers(), requestor()],
 	        	     subject: "Job '${JOB_NAME}' (build: ${BUILD_NUMBER}) status is ${currentBuild.result}",
-	    	         body: 'Please go to ${BUILD_URL} and verify the build',
+	    	         body: "Please go to ${BUILD_URL} and verify the build",
 	    	         attachLog: true,
-	    	         compressLog:true
+	    	         compressLog: true
 	    }
 	   failure {
 
